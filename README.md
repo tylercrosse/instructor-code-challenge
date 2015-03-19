@@ -1,6 +1,6 @@
 ![GA Logo](https://raw.github.com/generalassembly/ga-ruby-on-rails-for-devs/master/images/ga.png)
 
-## Instructor Code Challenge
+## WDI Instructor Code Challenge
 
 ---
 
