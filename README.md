@@ -2,16 +2,11 @@
 
 ## WDI Instructor Code Challenge
 
----
-
 ### GOAL 
-
 
 > Create a single page application that will utilize an external API to request movie data. The client side application will be served by a back-end which will have the ability to persist data.
 
----
-
-**Back-end Instructions**
+#### Back-end Instructions
 
 - Within this repo you will have noticed two folders entitled `node-backend-starter-code` and `ruby-backend-starter-code`. Each of these contains similar back-ends written in frameworks respective to their languages - Sinatra for Ruby and Express for Node.
 
@@ -19,7 +14,7 @@
 
 - Both back-ends contain several errors that commonly made by students, so you will need to do some debugging to ensure they are working correctly.
 
-**Front-end Instructions**
+#### Front-end Instructions
 
 - Use Vanilla Javascript to complete.
 
@@ -33,21 +28,19 @@
 
 - Provide a link to display favorited movies.
 
----
-
-**Things we are looking for**
+#### Things we are looking for
 
 - Clear, simple code
 - Explanatory comments for beginners
 - Consistent Naming Conventions
 - Valid HTML, CSS, and JavaScript
 
-**Deliverables**
+#### Deliverables
 
 - Please send us back a link to a git repo with the completed code challenge. 
 
 - Include a README.md file in your repo with a link to your application deployed on Heroku or Digital Ocean.
 
-**Bonus**
+#### Bonus
 
 - Rewrite the application using a JavaScript MVC library. Include a readme that explains the benefits and any additional challenges students would face learning the library
