@@ -2,14 +2,18 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 var path = require('path');
+var bodyParser = require('body-parser');
 
-app.use(express.static(path.join(__dirname, '/public')));
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/x-www-form-urlencoded
 
-app.get('/', function(req, res) {
-  res.render('public/index.html');
-});
+// root - looks for index.html in /public
+app.use('/', express.static(path.join(__dirname, 'public')));
+
+// root
+// app.get('/', function(req, res) {
+//   res.render('public/index.html');
+// });
 
 app.get('/favorites', function(req, res){
   var data = fs.readFileSync('./data.json');
@@ -18,18 +22,20 @@ app.get('/favorites', function(req, res){
 });
 
 app.get('favorites', function(req, res){
+  var data = JSON.parse(fs.readFileSync('./data.json'));
+
   if(!req.body.name || !req.body.oid){
     res.send("Error");
-    return;
+  } else {
+    data.push(req.body);
+    fs.writeFile('./data.json', JSON.stringify(data));
+    res.setHeader('Content-Type', 'application/json');
+    res.send(data);
   }
 
-  var data = JSON.parse(fs.readFileSync('./data.json'));
-  data.push(req.body);
-  fs.writeFile('./data.json', JSON.stringify(data));
-  res.setHeader('Content-Type', 'application/json');
-  res.send(data);
 });
 
+// Run app on Port 3000
 app.listen(3000, function(){
   console.log("Listening on port 3000");
 });
