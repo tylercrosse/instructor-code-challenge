@@ -1,0 +1,24 @@
+#search-form {
+  display: inline-block;
+}
+
+.inlineButton {
+  display: inline-block;
+}
+
+.movieResult {
+  text-align: center;
+  background-color: rgb(212, 212, 212);
+}
+
+.moviePoster {
+  display: block;
+  margin: 0 auto;
+  height: 200px;
+  width: auto;
+}
+
+.controls,
+h1 {
+  text-align: center;
+}

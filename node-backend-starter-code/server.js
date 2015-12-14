@@ -7,13 +7,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/x-www-form-urlencoded
 
-// root - looks for index.html in /public
 app.use('/', express.static(path.join(__dirname, 'public')));
-
-// root
-// app.get('/', function(req, res) {
-//   res.render('public/index.html');
-// });
 
 app.get('/favorites', function(req, res){
   var data = fs.readFileSync('./data.json');
@@ -32,7 +26,6 @@ app.get('favorites', function(req, res){
     res.setHeader('Content-Type', 'application/json');
     res.send(data);
   }
-
 });
 
 // Run app on Port 3000
