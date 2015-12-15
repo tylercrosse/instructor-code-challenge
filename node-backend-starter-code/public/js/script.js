@@ -3,8 +3,8 @@ window.onload = function() {
   var searchForm = document.getElementById('search-form');
   searchForm.addEventListener('submit', function() {
     event.preventDefault();
-    // searchMovies();
-    popcorn.searchMovies();
+    // call the function that searches OMDB
+    popcorn.getMovies();
     searchForm.reset();
   });
 
@@ -16,7 +16,7 @@ window.onload = function() {
 };
 
 var popcorn = {
-  searchMovies: function() {
+  getMovies: function() {
     // get keyword from search form, & destination for where to render results
     var keyword = document.getElementById('search-keyword').value;
     var results = document.getElementById('results');
@@ -37,39 +37,33 @@ var popcorn = {
     var resObj = JSON.parse(e.target.responseText);
     // use just the 'Search' values of response object
     var res = resObj.Search;
-    console.log(res);
 
     // create html elements for each item of res, add them to '.results'
     for (var i = 0; i < res.length; i++) {
-      var newDiv = document.createElement('div');
-      newDiv.setAttribute('id', res[i].imdbID);
-      newDiv.setAttribute('class', 'omdbResult');
-      newDiv.innerHTML =
+      var omdbResult = document.createElement('div');
+      omdbResult.setAttribute('id', res[i].imdbID);
+      omdbResult.setAttribute('class', 'omdbResult');
+      omdbResult.innerHTML =
         '<strong><p class="title">'+ res[i].Title +'</p></strong> \
         <p>'+ res[i].Year +'</p> \
         <img class="moviePoster" src='+ res[i].Poster +'>';
-
-      var detailButton = document.createElement('button');
-      detailButton.innerHTML = 'Show Details';
-      detailButton.setAttribute('class', 'inlineButton detailButton');
-      detailButton.addEventListener('click', popcorn.getDetails);
 
       var favButton = document.createElement('form');
       favButton.setAttribute('class', 'inlineButton');
       favButton.innerHTML = '<input type="submit" value="Favorite this Movie" >';
       favButton.addEventListener('submit', popcorn.addToFavorites);
 
-      newDiv.appendChild(detailButton);
-      newDiv.appendChild(favButton);
-      results.appendChild(newDiv);
+      popcorn.getDetails(omdbResult);
+
+      omdbResult.appendChild(favButton);
+      results.appendChild(omdbResult);
     }
   },
-  getDetails: function() {
+  getDetails: function(omdbResult) {
     event.preventDefault();
 
-    var self = this;
-    var omdbResult = self.parentNode;
-    omdbResult.classList.add("detailed");
+    // var self = this;
+    // var omdbResult = self.parentNode;
     var title = omdbResult.querySelector('.title').innerHTML;
     var url = 'http://www.omdbapi.com/?t=' + escape(title) + '&y=&plot=full&r=json';
     var xhr = new XMLHttpRequest();
@@ -82,6 +76,8 @@ var popcorn = {
   },
   renderDetails: function(res, omdbResult) {
     var details = document.createElement('div');
+    details.setAttribute('class', 'details');
+    details.style.display = 'none';
     details.innerHTML =
       '<p>'+ res.Rated +' | '+ res.Runtime +' | '+ res.Genre +'</p> \
       <p>IMDB Rating: '+ res.imdbRating +' / 10</p> \
@@ -89,6 +85,17 @@ var popcorn = {
       <p>Writer: '+ res.Writer +'</p> \
       <p>Actors: '+ res.Actors +'</p> \
       <p class="plot">'+ res.Plot +'</p>';
+    // append details to result card passed into function
+
+    var detailButton = document.createElement('button');
+    detailButton.innerHTML = 'Show Details';
+    detailButton.setAttribute('class', 'inlineButton detailButton');
+    detailButton.addEventListener('click', function(){
+      popcorn.toggleVisible(details);
+      omdbResult.classList.toggle("detailed"); // TODO superflouous; seperate to keep main functions more clear
+    });
+
+    omdbResult.appendChild(detailButton);
     omdbResult.appendChild(details);
   },
   addToFavorites: function() {
@@ -104,5 +111,17 @@ var popcorn = {
   showFavorites: function() {
     console.log("Showing Favorites");
     // get show button element
-  }
+  },
+  toggleVisible: function(elToToggle) {
+    console.log(this);
+    var el = elToToggle;
+    if(el.style.display == 'none')
+    {
+      el.style.display = 'block';
+    }
+    else
+    {
+      el.style.display = 'none';
+    }
+  } // http://stackoverflow.com/questions/7662247/javascript-show-and-hide-elements-on-click
 };
