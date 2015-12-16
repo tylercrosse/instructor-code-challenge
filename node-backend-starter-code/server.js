@@ -15,9 +15,8 @@ app.get('/favorites', function(req, res){
   res.send(data);
 });
 
-app.get('favorites', function(req, res){
+app.post('/favorites', function(req, res){
   var data = JSON.parse(fs.readFileSync('./data.json'));
-
   if(!req.body.name || !req.body.oid){
     res.send("Error");
   } else {
@@ -30,5 +29,5 @@ app.get('favorites', function(req, res){
 
 // Run app on Port 3000
 app.listen(3000, function(){
-  console.log("Listening on port 3000");
+  console.log("Go to 127.0.0.1:3000");
 });

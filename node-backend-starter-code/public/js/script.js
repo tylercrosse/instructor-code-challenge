@@ -15,6 +15,7 @@ window.onload = function() {
   });
 };
 
+
 var popcorn = {
   getMovies: function() {
     // get keyword from search form, & destination for where to render results
@@ -51,7 +52,9 @@ var popcorn = {
       var favButton = document.createElement('form');
       favButton.setAttribute('class', 'inlineButton');
       favButton.innerHTML = '<input type="submit" value="Favorite this Movie" >';
-      favButton.addEventListener('submit', popcorn.addToFavorites);
+      favButton.addEventListener('submit', function() {
+        popcorn.addToFavorites(res[i]);
+      });
 
       popcorn.getDetails(omdbResult);
 
@@ -98,22 +101,32 @@ var popcorn = {
     omdbResult.appendChild(detailButton);
     omdbResult.appendChild(details);
   },
-  addToFavorites: function() {
+  addToFavorites: function(data) {
     event.preventDefault();
+    console.log(data);
 
+    var url = '/favorites';
     var xhr = new XMLHttpRequest();
     xhr.onload = function() {
-      //
+      console.log("onload");
     };
     xhr.open('POST', url, true); // method, destination, aysnc=boolean
-    xhr.send(); // data to send
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    // data to send, server.js requires 'name' & 'old' keys in request
+    xhr.send('{"name":"name something","oid":"old something"}');
   },
   showFavorites: function() {
     console.log("Showing Favorites");
-    // get show button element
+
+    var url = "";
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      // getMovies -> renderMovies -> getDetails -> renderDetails -> toggleVisible
+    };
+    xhr.open('GET', url, true); // method, destination, aysnc=boolean
+    xhr.send();
   },
   toggleVisible: function(elToToggle) {
-    console.log(this);
     var el = elToToggle;
     if(el.style.display == 'none')
     {
