@@ -1,5 +1,7 @@
 window.onload = function() {
-  // on submit of search form call search function
+  popcorn.getFavorites();
+
+  // on submit of search form call search function (callback)
   var searchForm = document.getElementById('search-form');
   searchForm.addEventListener('submit', function() {
     event.preventDefault();
@@ -11,10 +13,11 @@ window.onload = function() {
   var showFavForm = document.getElementById('show-fav-form');
   showFavForm.addEventListener('submit', function() {
     event.preventDefault();
-    popcorn.showFavorites();
+    popcorn.getFavorites();
   });
 };
 
+var favs = [];
 
 var popcorn = {
   getMovies: function() {
@@ -41,6 +44,7 @@ var popcorn = {
 
     // create html elements for each item of res, add them to '.results'
     for (var i = 0; i < res.length; i++) {
+
       var omdbResult = document.createElement('div');
       omdbResult.setAttribute('id', res[i].imdbID);
       omdbResult.setAttribute('class', 'omdbResult');
@@ -53,13 +57,27 @@ var popcorn = {
       favButton.setAttribute('class', 'inlineButton');
       favButton.innerHTML = '<input type="submit" value="Favorite this Movie" >';
       favButton.addEventListener('submit', function() {
-        popcorn.addToFavorites(res[i]);
+        event.preventDefault();
+        var title =this.parentNode.querySelector('.title').innerHTML;
+        var id = this.parentNode.id;
+        popcorn.addToFavorites(title, id);
       });
 
       popcorn.getDetails(omdbResult);
 
       omdbResult.appendChild(favButton);
       results.appendChild(omdbResult);
+
+      for (var j = 0; j < favs.length; j++) {
+        if (res[i].imdbID == favs[j].oid) {
+          console.log("Favorited");
+          omdbResult.style.background = "red";
+        }
+      }
+
+      // if (favorited) {
+      //
+      // } else {}
     }
   },
   getDetails: function(omdbResult) {
@@ -101,27 +119,34 @@ var popcorn = {
     omdbResult.appendChild(detailButton);
     omdbResult.appendChild(details);
   },
-  addToFavorites: function(data) {
+  addToFavorites: function(title, id) {
     event.preventDefault();
-    console.log(data);
+
+    console.log(title);
+    console.log(id);
+
 
     var url = '/favorites';
     var xhr = new XMLHttpRequest();
     xhr.onload = function() {
-      console.log("onload");
+      // something
     };
     xhr.open('POST', url, true); // method, destination, aysnc=boolean
     xhr.setRequestHeader('Content-Type', 'application/json');
     // data to send, server.js requires 'name' & 'old' keys in request
-    xhr.send('{"name":"name something","oid":"old something"}');
+    xhr.send('{"name":"'+ title +'","oid":"'+ id +'"}');
   },
-  showFavorites: function() {
+  getFavorites: function() {
     console.log("Showing Favorites");
 
-    var url = "";
+    var url = '/favorites';
     var xhr = new XMLHttpRequest();
-    xhr.onload = function() {
+    xhr.onload = function(e) {
       // getMovies -> renderMovies -> getDetails -> renderDetails -> toggleVisible
+      res = JSON.parse(e.target.response);
+      for (var i=0; i < res.length; i++) {
+        favs.push(res[i]);
+      }
     };
     xhr.open('GET', url, true); // method, destination, aysnc=boolean
     xhr.send();
