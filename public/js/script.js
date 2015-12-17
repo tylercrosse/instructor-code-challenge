@@ -126,18 +126,14 @@ var popcorn = {
       <p>Actors: ' + res.Actors + '</p> \
       <p class="plot">' + res.Plot + '</p>';
 
-    // add detail button - toggles show/hide of details
-    var detailButton = document.createElement('button');
-    detailButton.innerHTML = 'Show Details';
-    detailButton.setAttribute('class', 'inlineButton detailButton');
-    detailButton.addEventListener('click', function() {
+    // toggle show/hide of details when card is clicked on
+    omdbResult.addEventListener('click', function() {
       // toggle details
       popcorn.toggleVisible(details);
       omdbResult.classList.toggle("detailed");
     });
 
     // append content to DOM
-    omdbResult.appendChild(detailButton);
     omdbResult.appendChild(details);
   },
   checkFavorites: function(id, omdbResult) {
