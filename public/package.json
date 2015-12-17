@@ -1,0 +1,22 @@
+{
+  "name": "instructor-code-challenge",
+  "version": "1.0.0",
+  "description": "Simple single page movie app",
+  "main": "node-backend-starter-code/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tylercrosse/instructor-code-challenge.git"
+  },
+  "author": "Tyler Crosse",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tylercrosse/instructor-code-challenge/issues"
+  },
+  "homepage": "https://github.com/tylercrosse/instructor-code-challenge#readme",
+  "dependencies": {
+    "body-parser": "^1.14.1"
+  }
+}
