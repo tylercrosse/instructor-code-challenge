@@ -34,7 +34,7 @@ var popcorn = {
     var keyword = document.getElementById('search-keyword').value;
     var results = document.getElementById('results');
     // add keyword to url used in api request
-    var url = 'http://www.omdbapi.com/?s='+ escape(keyword);
+    var url = 'https://www.omdbapi.com/?s='+ escape(keyword);
 
     // create new XMLHttpRequest Object
     var xhr = new XMLHttpRequest();
@@ -103,7 +103,7 @@ var popcorn = {
     // otherwise make a api call to get details and use that to render details
     else {
       var title = omdbResult.querySelector('.title').innerHTML;
-      var url = 'http://www.omdbapi.com/?t=' + escape(title) + '&y=&plot=full&r=json';
+      var url = 'https://www.omdbapi.com/?t=' + escape(title) + '&y=&plot=full&r=json';
       var xhr = new XMLHttpRequest();
       xhr.onload = function(e) {
         var res = JSON.parse(e.target.responseText);
@@ -205,7 +205,7 @@ var popcorn = {
     // make an API call for each favorite and render result
     for ( var i = 0; i < favs.length; i++ ) {
       var title = favs[i].name;
-      var url = 'http://www.omdbapi.com/?t=' + escape(title) + '&y=&plot=full&r=json';
+      var url = 'https://www.omdbapi.com/?t=' + escape(title) + '&y=&plot=full&r=json';
       var xhr = new XMLHttpRequest();
       xhr.onload = function(e) {
         // IMPORTANT flag get passed along down cascade and tells getDetails & renderDetails
@@ -230,5 +230,5 @@ var popcorn = {
     {
       el.style.display = 'none';
     }
-  } 
+  }
 };
