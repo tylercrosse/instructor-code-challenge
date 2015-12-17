@@ -68,17 +68,27 @@ var popcorn = {
       omdbResult.appendChild(favButton);
       results.appendChild(omdbResult);
 
-      for (var j = 0; j < favs.length; j++) {
-        if (res[i].imdbID == favs[j].oid) {
-          console.log("Favorited");
-          omdbResult.style.background = "red";
+      popcorn.checkFavorites(res[i].imdbID, omdbResult);
+
+    }
+  },
+  checkFavorites: function(id, omdbResult) {
+    var favorited = false;
+
+    // check id of movie in question against the ones that have already been favorited
+    for (var j = 0; j < favs.length; j++) {
+      console.log(favs[j].oid + " Against");
+
+      if (id == favs[j].oid) {
+        // when function is passed an omdbResult div && it's been favorited then color it
+        if (omdbResult) {
+          omdbResult.style.background = "gold";
         }
+        favorited = true;
       }
 
-      // if (favorited) {
-      //
-      // } else {}
     }
+    return favorited;
   },
   getDetails: function(omdbResult) {
     event.preventDefault();
@@ -121,24 +131,32 @@ var popcorn = {
   },
   addToFavorites: function(title, id) {
     event.preventDefault();
+    omdbResult = event.path[1];
 
-    console.log(title);
-    console.log(id);
+    if (popcorn.checkFavorites(id)) {
+      console.log("Already in favorites!");
+    }
+    else {
+      console.log("Added to favorites!");
 
+      fav = {name: title, oid: id};
+      favs.push(fav);
 
-    var url = '/favorites';
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function() {
-      // something
-    };
-    xhr.open('POST', url, true); // method, destination, aysnc=boolean
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    // data to send, server.js requires 'name' & 'old' keys in request
-    xhr.send('{"name":"'+ title +'","oid":"'+ id +'"}');
+      omdbResult.style.background = "gold";
+
+      var url = '/favorites';
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        // IDEA something about success / failure
+      };
+      xhr.open('POST', url, true); // method, destination, aysnc=boolean
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      // data to send, server.js requires 'name' & 'old' keys in request
+      xhr.send('{"name":"'+ title +'","oid":"'+ id +'"}');
+    }
+
   },
   getFavorites: function() {
-    console.log("Showing Favorites");
-
     var url = '/favorites';
     var xhr = new XMLHttpRequest();
     xhr.onload = function(e) {
