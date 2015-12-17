@@ -5,8 +5,8 @@ window.onload = function() {
   var searchForm = document.getElementById('search-form');
   searchForm.addEventListener('submit', function() {
     event.preventDefault();
-    // clear previous results
-    document.getElementById('results').innerHTML = '';
+
+    popcorn.clearResults();
 
     // call the function that searches OMDB
     popcorn.getMovies();
@@ -16,13 +16,19 @@ window.onload = function() {
   var showFavForm = document.getElementById('show-fav-form');
   showFavForm.addEventListener('submit', function() {
     event.preventDefault();
-    popcorn.getFavorites();
+
+    popcorn.clearResults();
+
+    popcorn.showFavorites();
   });
 };
 
 var favs = [];
 
 var popcorn = {
+  clearResults: function() {
+    document.getElementById('results').innerHTML = '';
+  },
   getMovies: function() {
     // get keyword from search form, & destination for where to render results
     var keyword = document.getElementById('search-keyword').value;
@@ -39,11 +45,11 @@ var popcorn = {
     // sends request, if asynch returns as soon as request is sent, if not asynch then doesn't return until response has arrived
     xhr.send();
   },
-  renderMovies: function(e) {
+  renderMovies: function(e, flag) {
     // parse XMLHttpRequest.responseText in object
     var resObj = JSON.parse(e.target.responseText);
     // use just the 'Search' values of response object
-    var res = resObj.Search;
+    var res = (resObj.Search ? resObj.Search : resObj);
 
     // if mutiple responses run template(res) for each response
     if (res.length > 1) {
@@ -53,10 +59,11 @@ var popcorn = {
     }
     // otherwise run template(res) normally
     else {
-      popcorn.resultTemplate(res);
+      // if the flag exists, then pass it along - show
+      flag ? popcorn.resultTemplate(res, flag) : popcorn.resultTemplate(res);
     }
   },
-  resultTemplate: function(res) {
+  resultTemplate: function(res, flag) {
     // create html elements for each item of res, add them to '.results'
     var omdbResult = document.createElement('div');
     omdbResult.setAttribute('id', res.imdbID);
@@ -76,25 +83,34 @@ var popcorn = {
       popcorn.addToFavorites(title, id);
     });
     // make an api call to get details, render them, hide them, & add button to toggle details
-    popcorn.getDetails(omdbResult);
+    // if flag exists, pass the response to next function
+    flag ? popcorn.getDetails(omdbResult, res) : popcorn.getDetails(omdbResult);
+
     // add conent to DOM
     omdbResult.appendChild(favButton);
     results.appendChild(omdbResult);
     // check if results are in the list that has already been favorited
     popcorn.checkFavorites(res.imdbID, omdbResult);
   },
-  getDetails: function(omdbResult) {
+  getDetails: function(omdbResult, res) {
     event.preventDefault();
 
-    var title = omdbResult.querySelector('.title').innerHTML;
-    var url = 'http://www.omdbapi.com/?t=' + escape(title) + '&y=&plot=full&r=json';
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function(e) {
-      var res = JSON.parse(e.target.responseText);
+    // if function is called with a response use that to render details
+    if (res) {
       popcorn.renderDetails(res, omdbResult);
-    };
-    xhr.open('GET', url, true);
-    xhr.send();
+    }
+    // otherwise make a api call to get details and use that to render details
+    else {
+      var title = omdbResult.querySelector('.title').innerHTML;
+      var url = 'http://www.omdbapi.com/?t=' + escape(title) + '&y=&plot=full&r=json';
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function(e) {
+        var res = JSON.parse(e.target.responseText);
+        popcorn.renderDetails(res, omdbResult);
+      };
+      xhr.open('GET', url, true);
+      xhr.send();
+    }
   },
   renderDetails: function(res, omdbResult) {
     var details = document.createElement('div');
@@ -178,11 +194,22 @@ var popcorn = {
     xhr.open('GET', url, true); // method, destination, aysnc=boolean
     xhr.send();
   },
-  renderFavorites: function() {
-    // TODO can at least use renderMovies -> getDetails -> renderDetails(res, omdbResult)
-    // still need to function that does same as getMovies
-
-
+  showFavorites: function() {
+    // make an API call for each favorite and render result
+    for ( var i = 0; i < favs.length; i++ ) {
+      var title = favs[i].name;
+      var url = 'http://www.omdbapi.com/?t=' + escape(title) + '&y=&plot=full&r=json';
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function(e) {
+        // IMPORTANT flag get passed along down cascade and tells getDetails & renderDetails
+        // to use the response from here instead of making another API call for the same data
+        // renderMovies -> resultTemplate -> getDetails -> renderDetails(res, omdbResult)
+        var flag = true;
+        popcorn.renderMovies(e, flag);
+      };
+      xhr.open('GET', url, true);
+      xhr.send();
+    }
   },
   toggleVisible: function(elToToggle) {
     var el = elToToggle;
