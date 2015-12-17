@@ -230,5 +230,5 @@ var popcorn = {
     {
       el.style.display = 'none';
     }
-  } // http://stackoverflow.com/questions/7662247/javascript-show-and-hide-elements-on-click
+  } 
 };
