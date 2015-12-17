@@ -1,3 +1,8 @@
+body {
+  background-color: rgb(224, 224, 224);
+  font-family: 'Montserrat', sans-serif;
+}
+
 p {
   margin: 4px;
 }
@@ -10,29 +15,77 @@ p {
   display: inline-block;
 }
 
-.omdbResult {
-  box-sizing: border-box;
-  margin: 10px;
-  padding: 4px;
-  text-align: center;
-  background-color: rgb(212, 212, 212);
-  border-radius: 3px;
-}
-
-.omdbResult.detailed {
-  transition: all 800ms cubic-bezier(0.645, 0.045, 0.355, 1.000);
-  background-color: rgb(143, 196, 222);
-}
-
-.moviePoster {
-  display: block;
+#results {
+  width: 70%;
   margin: 0 auto;
-  height: 200px;
-  width: auto;
-  padding: 4px;
 }
+
+.omdbResult {
+  text-align: center;
+  background-color: #fafafa;
+  box-shadow: 0 0 2px 0 rgba(0,0,0,0.12), 0 2px 2px 0 rgba(0,0,0,0.24);
+  border-radius: 3px;
+  /*width: 600px;*/
+  height: auto;
+  margin: 16px 0;
+  padding: 12px;
+  transition: all .1s ease-in-out;
+}
+
+  .moviePoster {
+    padding: 4px;
+    position: relative;
+    float: left;
+    }
+
+  .title {
+    padding-top: 16px;
+  }
+
+  .omdbResult:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .omdbResult:hover {
+    box-shadow: 0 3px 7px 0px rgba(0,0,0,0.2125);
+    transform: scale(1.035);
+  }
+
+  .omdbResult.detailed {
+    transition: all 800ms cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    background-color: rgb(143, 196, 222);
+  }
+
+  .omdbResult img {
+    height: 100px;
+    width: auto;
+    transition: all .1s ease-in-out;
+  }
+
+  .details {
+    margin-top: 16px;
+  }
+
+  .details + .moviePoster {
+    height: 200px
+    width: auto
+    transition: all .1s ease-in-out;
+  }
+
+
 
 .controls,
 h1 {
   text-align: center;
+}
+
+@media (max-width: 666px) {
+  #results {
+    width: 95%;
+  }
+  p {
+    font-size: 0.8em;
+  }
 }

@@ -34,7 +34,7 @@ var popcorn = {
     var keyword = document.getElementById('search-keyword').value;
     var results = document.getElementById('results');
     // add keyword to url used in api request
-    var url = 'https://www.omdbapi.com/?s='+ escape(keyword);
+    var url = 'https://www.omdbapi.com/?s=' + escape(keyword);
 
     // create new XMLHttpRequest Object
     var xhr = new XMLHttpRequest();
@@ -69,16 +69,16 @@ var popcorn = {
     omdbResult.setAttribute('id', res.imdbID);
     omdbResult.setAttribute('class', 'omdbResult');
     omdbResult.innerHTML =
-      '<strong><p class="title">'+ res.Title +'</p></strong> \
-      <p>'+ res.Year +'</p> \
-      <img class="moviePoster" src='+ res.Poster +'>';
+      '<img class="moviePoster" src=' + res.Poster + '> \
+      <strong><p class="title">' + res.Title + '</p></strong> \
+      <p>' + res.Year + '</p>';
     // add favorite button
     var favButton = document.createElement('form');
     favButton.setAttribute('class', 'inlineButton');
     favButton.innerHTML = '<input type="submit" value="Favorite this Movie" >';
     favButton.addEventListener('submit', function() {
       event.preventDefault();
-      var title =this.parentNode.querySelector('.title').innerHTML;
+      var title = this.parentNode.querySelector('.title').innerHTML;
       var id = this.parentNode.id;
       popcorn.addToFavorites(title, id);
     });
@@ -119,18 +119,18 @@ var popcorn = {
     // initially hide details
     details.style.display = 'none';
     details.innerHTML =
-      '<p>'+ res.Rated +' | '+ res.Runtime +' | '+ res.Genre +'</p> \
-      <p>IMDB Rating: '+ res.imdbRating +' / 10</p> \
-      <p>Director: '+ res.Director +'</p> \
-      <p>Writer: '+ res.Writer +'</p> \
-      <p>Actors: '+ res.Actors +'</p> \
-      <p class="plot">'+ res.Plot +'</p>';
+      '<p>' + res.Rated + ' | ' + res.Runtime + ' | ' + res.Genre + '</p> \
+      <p>IMDB Rating: ' + res.imdbRating + ' / 10</p> \
+      <p>Director: ' + res.Director + '</p> \
+      <p>Writer: ' + res.Writer + '</p> \
+      <p>Actors: ' + res.Actors + '</p> \
+      <p class="plot">' + res.Plot + '</p>';
 
     // add detail button - toggles show/hide of details
     var detailButton = document.createElement('button');
     detailButton.innerHTML = 'Show Details';
     detailButton.setAttribute('class', 'inlineButton detailButton');
-    detailButton.addEventListener('click', function(){
+    detailButton.addEventListener('click', function() {
       // toggle details
       popcorn.toggleVisible(details);
       omdbResult.classList.toggle("detailed");
@@ -165,11 +165,13 @@ var popcorn = {
     // check if already favorited before adding
     if (popcorn.checkFavorites(id)) {
       console.log("Already in favorites!");
-    }
-    else {
+    } else {
       console.log("Added to favorites!");
 
-      fav = {name: title, oid: id};
+      fav = {
+        name: title,
+        oid: id
+      };
       favs.push(fav);
 
       omdbResult.style.background = "gold";
@@ -183,7 +185,7 @@ var popcorn = {
       xhr.open('POST', url, true); // method, destination, aysnc=boolean
       xhr.setRequestHeader('Content-Type', 'application/json');
       // data to send, server.js requires 'name' & 'old' keys in request
-      xhr.send('{"name":"'+ title +'","oid":"'+ id +'"}');
+      xhr.send('{"name":"' + title + '","oid":"' + id + '"}');
     }
 
   },
@@ -194,7 +196,7 @@ var popcorn = {
     xhr.onload = function(e) {
       res = JSON.parse(e.target.response);
       // add each response to favs array
-      for (var i=0; i < res.length; i++) {
+      for (var i = 0; i < res.length; i++) {
         favs.push(res[i]);
       }
     };
@@ -203,7 +205,7 @@ var popcorn = {
   },
   showFavorites: function() {
     // make an API call for each favorite and render result
-    for ( var i = 0; i < favs.length; i++ ) {
+    for (var i = 0; i < favs.length; i++) {
       var title = favs[i].name;
       var url = 'https://www.omdbapi.com/?t=' + escape(title) + '&y=&plot=full&r=json';
       var xhr = new XMLHttpRequest();
@@ -222,12 +224,9 @@ var popcorn = {
   toggleVisible: function(elToToggle) {
     // similar functionality to jQuery .toggle()
     var el = elToToggle;
-    if(el.style.display == 'none')
-    {
+    if (el.style.display == 'none') {
       el.style.display = 'block';
-    }
-    else
-    {
+    } else {
       el.style.display = 'none';
     }
   }
