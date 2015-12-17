@@ -28,6 +28,6 @@ app.post('/favorites', function(req, res){
 });
 
 // Run app on Port 3000
-app.listen(3000, function(){
+app.listen(process.env.PORT || 3000, function(){
   console.log("Go to 127.0.0.1:3000");
 });
