@@ -48,19 +48,19 @@ var popcorn = {
   renderMovies: function(e, flag) {
     // parse XMLHttpRequest.responseText in object
     var resObj = JSON.parse(e.target.responseText);
-    // use just the 'Search' values of response object
-    var res = (resObj.Search ? resObj.Search : resObj);
 
-    // if mutiple responses run template(res) for each response
-    if (res.length > 1) {
+    // if response came from search, iterate through it
+    if (resObj.Search) {
+      var res = resObj.Search;
       for (var i = 0; i < res.length; i++) {
         popcorn.resultTemplate(res[i]);
       }
     }
-    // otherwise run template(res) normally
+    // otherwise pass along flag to indicate not from search - flag is used to distinguish b/t
+    // whether this was orginally called by search vs. showFavorites
     else {
-      // if the flag exists, then pass it along - show
-      flag ? popcorn.resultTemplate(res, flag) : popcorn.resultTemplate(res);
+      var res = resObj;
+      popcorn.resultTemplate(res, flag);
     }
   },
   resultTemplate: function(res, flag) {
@@ -83,7 +83,8 @@ var popcorn = {
       popcorn.addToFavorites(title, id);
     });
     // make an api call to get details, render them, hide them, & add button to toggle details
-    // if flag exists, pass the response to next function
+    // if flag exists, pass the response to next function - flag is used to distinguish b/t
+    // whether this was orginally called by search vs. showFavorites
     flag ? popcorn.getDetails(omdbResult, res) : popcorn.getDetails(omdbResult);
 
     // add conent to DOM
@@ -115,6 +116,7 @@ var popcorn = {
   renderDetails: function(res, omdbResult) {
     var details = document.createElement('div');
     details.setAttribute('class', 'details');
+    // initially hide details
     details.style.display = 'none';
     details.innerHTML =
       '<p>'+ res.Rated +' | '+ res.Runtime +' | '+ res.Genre +'</p> \
@@ -124,11 +126,12 @@ var popcorn = {
       <p>Actors: '+ res.Actors +'</p> \
       <p class="plot">'+ res.Plot +'</p>';
 
-    // add detail button
+    // add detail button - toggles show/hide of details
     var detailButton = document.createElement('button');
     detailButton.innerHTML = 'Show Details';
     detailButton.setAttribute('class', 'inlineButton detailButton');
     detailButton.addEventListener('click', function(){
+      // toggle details
       popcorn.toggleVisible(details);
       omdbResult.classList.toggle("detailed");
     });
@@ -159,6 +162,7 @@ var popcorn = {
     event.preventDefault();
     omdbResult = event.path[1];
 
+    // check if already favorited before adding
     if (popcorn.checkFavorites(id)) {
       console.log("Already in favorites!");
     }
@@ -170,10 +174,11 @@ var popcorn = {
 
       omdbResult.style.background = "gold";
 
+      // post request to express backend, stored in data.json
       var url = '/favorites';
       var xhr = new XMLHttpRequest();
       xhr.onload = function() {
-        // IDEA something about success / failure
+
       };
       xhr.open('POST', url, true); // method, destination, aysnc=boolean
       xhr.setRequestHeader('Content-Type', 'application/json');
@@ -183,10 +188,12 @@ var popcorn = {
 
   },
   getFavorites: function() {
+    // get favorites from data.json
     var url = '/favorites';
     var xhr = new XMLHttpRequest();
     xhr.onload = function(e) {
       res = JSON.parse(e.target.response);
+      // add each response to favs array
       for (var i=0; i < res.length; i++) {
         favs.push(res[i]);
       }
@@ -204,6 +211,7 @@ var popcorn = {
         // IMPORTANT flag get passed along down cascade and tells getDetails & renderDetails
         // to use the response from here instead of making another API call for the same data
         // renderMovies -> resultTemplate -> getDetails -> renderDetails(res, omdbResult)
+        // using the flag helps reduce duplicate code
         var flag = true;
         popcorn.renderMovies(e, flag);
       };
@@ -212,6 +220,7 @@ var popcorn = {
     }
   },
   toggleVisible: function(elToToggle) {
+    // similar functionality to jQuery .toggle()
     var el = elToToggle;
     if(el.style.display == 'none')
     {
