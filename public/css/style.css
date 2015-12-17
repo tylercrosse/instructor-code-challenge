@@ -68,13 +68,12 @@ p {
     margin-top: 16px;
   }
 
-  .details + .moviePoster {
-    height: 200px
-    width: auto
+  .detailed > .moviePoster {
+    float: none;
+    height: 200px;
+    width: auto;
     transition: all .1s ease-in-out;
   }
-
-
 
 .controls,
 h1 {
