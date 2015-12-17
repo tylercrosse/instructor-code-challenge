@@ -5,6 +5,9 @@ window.onload = function() {
   var searchForm = document.getElementById('search-form');
   searchForm.addEventListener('submit', function() {
     event.preventDefault();
+    // clear previous results
+    document.getElementById('results').innerHTML = '';
+
     // call the function that searches OMDB
     popcorn.getMovies();
     searchForm.reset();
@@ -44,6 +47,8 @@ var popcorn = {
 
     // create html elements for each item of res, add them to '.results'
     for (var i = 0; i < res.length; i++) {
+      // if res.length > 1 run template(res) in for loop
+      // else run template(res) normally
 
       var omdbResult = document.createElement('div');
       omdbResult.setAttribute('id', res[i].imdbID);
@@ -52,7 +57,7 @@ var popcorn = {
         '<strong><p class="title">'+ res[i].Title +'</p></strong> \
         <p>'+ res[i].Year +'</p> \
         <img class="moviePoster" src='+ res[i].Poster +'>';
-
+      // add favorite button
       var favButton = document.createElement('form');
       favButton.setAttribute('class', 'inlineButton');
       favButton.innerHTML = '<input type="submit" value="Favorite this Movie" >';
@@ -62,39 +67,21 @@ var popcorn = {
         var id = this.parentNode.id;
         popcorn.addToFavorites(title, id);
       });
-
+      // make an api call to get details, render them, hide them, & add button to toggle details
       popcorn.getDetails(omdbResult);
-
+      // add conent to DOM
       omdbResult.appendChild(favButton);
       results.appendChild(omdbResult);
-
+      // check if results are in the list that has already been favorited
       popcorn.checkFavorites(res[i].imdbID, omdbResult);
-
     }
   },
-  checkFavorites: function(id, omdbResult) {
-    var favorited = false;
+  resultTemplate: function(res) {
 
-    // check id of movie in question against the ones that have already been favorited
-    for (var j = 0; j < favs.length; j++) {
-      console.log(favs[j].oid + " Against");
-
-      if (id == favs[j].oid) {
-        // when function is passed an omdbResult div && it's been favorited then color it
-        if (omdbResult) {
-          omdbResult.style.background = "gold";
-        }
-        favorited = true;
-      }
-
-    }
-    return favorited;
   },
   getDetails: function(omdbResult) {
     event.preventDefault();
 
-    // var self = this;
-    // var omdbResult = self.parentNode;
     var title = omdbResult.querySelector('.title').innerHTML;
     var url = 'http://www.omdbapi.com/?t=' + escape(title) + '&y=&plot=full&r=json';
     var xhr = new XMLHttpRequest();
@@ -116,18 +103,37 @@ var popcorn = {
       <p>Writer: '+ res.Writer +'</p> \
       <p>Actors: '+ res.Actors +'</p> \
       <p class="plot">'+ res.Plot +'</p>';
-    // append details to result card passed into function
 
+    // add detail button
     var detailButton = document.createElement('button');
     detailButton.innerHTML = 'Show Details';
     detailButton.setAttribute('class', 'inlineButton detailButton');
     detailButton.addEventListener('click', function(){
       popcorn.toggleVisible(details);
-      omdbResult.classList.toggle("detailed"); // TODO superflouous; seperate to keep main functions more clear
+      omdbResult.classList.toggle("detailed");
     });
 
+    // append content to DOM
     omdbResult.appendChild(detailButton);
     omdbResult.appendChild(details);
+  },
+  checkFavorites: function(id, omdbResult) {
+    // by default assume, not favorited
+    var favorited = false;
+
+    // check id of movie in question against the ones that have already been favorited
+    for (var j = 0; j < favs.length; j++) {
+
+      if (id == favs[j].oid) {
+        // when function is passed an omdbResult div && it's been favorited then color it
+        if (omdbResult) {
+          omdbResult.style.background = "gold";
+        }
+        // change favorited to true if it has been favorited
+        favorited = true;
+      }
+    }
+    return favorited;
   },
   addToFavorites: function(title, id) {
     event.preventDefault();
@@ -160,7 +166,6 @@ var popcorn = {
     var url = '/favorites';
     var xhr = new XMLHttpRequest();
     xhr.onload = function(e) {
-      // getMovies -> renderMovies -> getDetails -> renderDetails -> toggleVisible
       res = JSON.parse(e.target.response);
       for (var i=0; i < res.length; i++) {
         favs.push(res[i]);
@@ -168,6 +173,12 @@ var popcorn = {
     };
     xhr.open('GET', url, true); // method, destination, aysnc=boolean
     xhr.send();
+  },
+  renderFavorites: function() {
+    // TODO can at least use renderDetails(res, omdbResult)
+    // still need to function that does same as getMovies -> renderMovies -> getDetails
+
+
   },
   toggleVisible: function(elToToggle) {
     var el = elToToggle;
