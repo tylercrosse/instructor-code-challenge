@@ -45,39 +45,43 @@ var popcorn = {
     // use just the 'Search' values of response object
     var res = resObj.Search;
 
-    // create html elements for each item of res, add them to '.results'
-    for (var i = 0; i < res.length; i++) {
-      // if res.length > 1 run template(res) in for loop
-      // else run template(res) normally
-
-      var omdbResult = document.createElement('div');
-      omdbResult.setAttribute('id', res[i].imdbID);
-      omdbResult.setAttribute('class', 'omdbResult');
-      omdbResult.innerHTML =
-        '<strong><p class="title">'+ res[i].Title +'</p></strong> \
-        <p>'+ res[i].Year +'</p> \
-        <img class="moviePoster" src='+ res[i].Poster +'>';
-      // add favorite button
-      var favButton = document.createElement('form');
-      favButton.setAttribute('class', 'inlineButton');
-      favButton.innerHTML = '<input type="submit" value="Favorite this Movie" >';
-      favButton.addEventListener('submit', function() {
-        event.preventDefault();
-        var title =this.parentNode.querySelector('.title').innerHTML;
-        var id = this.parentNode.id;
-        popcorn.addToFavorites(title, id);
-      });
-      // make an api call to get details, render them, hide them, & add button to toggle details
-      popcorn.getDetails(omdbResult);
-      // add conent to DOM
-      omdbResult.appendChild(favButton);
-      results.appendChild(omdbResult);
-      // check if results are in the list that has already been favorited
-      popcorn.checkFavorites(res[i].imdbID, omdbResult);
+    // if mutiple responses run template(res) for each response
+    if (res.length > 1) {
+      for (var i = 0; i < res.length; i++) {
+        popcorn.resultTemplate(res[i]);
+      }
+    }
+    // otherwise run template(res) normally
+    else {
+      popcorn.resultTemplate(res);
     }
   },
   resultTemplate: function(res) {
-
+    // create html elements for each item of res, add them to '.results'
+    var omdbResult = document.createElement('div');
+    omdbResult.setAttribute('id', res.imdbID);
+    omdbResult.setAttribute('class', 'omdbResult');
+    omdbResult.innerHTML =
+      '<strong><p class="title">'+ res.Title +'</p></strong> \
+      <p>'+ res.Year +'</p> \
+      <img class="moviePoster" src='+ res.Poster +'>';
+    // add favorite button
+    var favButton = document.createElement('form');
+    favButton.setAttribute('class', 'inlineButton');
+    favButton.innerHTML = '<input type="submit" value="Favorite this Movie" >';
+    favButton.addEventListener('submit', function() {
+      event.preventDefault();
+      var title =this.parentNode.querySelector('.title').innerHTML;
+      var id = this.parentNode.id;
+      popcorn.addToFavorites(title, id);
+    });
+    // make an api call to get details, render them, hide them, & add button to toggle details
+    popcorn.getDetails(omdbResult);
+    // add conent to DOM
+    omdbResult.appendChild(favButton);
+    results.appendChild(omdbResult);
+    // check if results are in the list that has already been favorited
+    popcorn.checkFavorites(res.imdbID, omdbResult);
   },
   getDetails: function(omdbResult) {
     event.preventDefault();
@@ -175,8 +179,8 @@ var popcorn = {
     xhr.send();
   },
   renderFavorites: function() {
-    // TODO can at least use renderDetails(res, omdbResult)
-    // still need to function that does same as getMovies -> renderMovies -> getDetails
+    // TODO can at least use renderMovies -> getDetails -> renderDetails(res, omdbResult)
+    // still need to function that does same as getMovies
 
 
   },
