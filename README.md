@@ -2,7 +2,11 @@
 
 ## WDI Instructor Code Challenge
 
-### GOAL 
+## DEPLOYED VERSION
+
+[Check out the deployed version](https://popcorn-tyler.herokuapp.com/)
+
+### GOAL
 
 > Create a single page application that will utilize an external API to request movie data. The client side application will be served by a back-end which will have the ability to persist data.
 
@@ -37,7 +41,7 @@
 
 #### Deliverables
 
-- Please send us back a link to a git repo with the completed code challenge. 
+- Please send us back a link to a git repo with the completed code challenge.
 
 - Include a README.md file in your repo with a link to your application deployed on Heroku or Digital Ocean.
 
